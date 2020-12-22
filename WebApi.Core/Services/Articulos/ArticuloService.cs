@@ -20,31 +20,68 @@ namespace WebApi.Core.Services.Articulos
             _articuloRepository = articuloRepository;
         }
 
-
-        public void Crear(ArticuloDto articuloDto)
+        public void CrearActualizar(List<ArticuloDto> articuloDto)
         {
-            if (!this.Validar(articuloDto))
-                return;
+            List<Articulo> articulos = _mapper.Map<List<Articulo>>(articuloDto);
 
-            Articulo found = _mapper.Map<Articulo>(articuloDto);
+            List<Articulo> update = new List<Articulo>();
+            List<Articulo> crear = new List<Articulo>();
 
-            found.FechaCreacion = DateTime.UtcNow;
-            found.IdEstado = (int)EstadoArticuloEnum.Activo;
+            foreach (Articulo articulo in articulos)
+            {
+                var found = _articuloRepository.FirstOrDefault(x => x.Codigo == articulo.Codigo);
 
-            _articuloRepository.Add(found);
+
+                if (found != null)
+                {
+                    found.FechaModificacion = DateTime.UtcNow;
+                    found.IdEstado = (int)EstadoArticuloEnum.Activo;
+                    found.Descripcion = articulo.Descripcion;
+                    found.Nombre = articulo.Nombre;
+                    found.Precio1 = articulo.Precio1;
+                    found.Precio2 = articulo.Precio2;
+                    found.Imagen = articulo.Imagen;
+                    update.Add(found);
+                }
+                else
+                {
+                    articulo.IdEstado = (int)EstadoArticuloEnum.Activo;
+                    articulo.FechaCreacion = DateTime.UtcNow;
+                    crear.Add(articulo);
+                }
+            }
+
+            _articuloRepository.AddRange(crear);
+            _articuloRepository.UpdateRange(update);
+
+
             _articuloRepository.Commit();
 
         }
-
-        public List<ArticuloDto> Articulos() 
+        
+        public List<ArticuloDto> Articulos(DateTime fecha) 
         {
             List<Expression<Func<Articulo, Object>>> includes = new List<Expression<Func<Articulo, Object>>>();
             includes.Add(x => x.Estado);
 
-            List<Articulo> articulo = _articuloRepository.GetMany(x=> x.Id == 1 , includes).ToList();
+            List<Articulo> articulo = _articuloRepository.GetMany(x=> x.FechaCreacion >= fecha || x.FechaModificacion>=fecha  , includes).ToList();
 
             return _mapper.Map<List<ArticuloDto>>(articulo);
         
+        }
+
+      
+
+        public List<PrecioCodigoDto> ArticuloPorPrecio(List<string> codigos) 
+        {
+
+            List<Expression<Func<Articulo, Object>>> includes = new List<Expression<Func<Articulo, Object>>>();
+            includes.Add(x => x.Estado);
+
+            List<Articulo> articulo = _articuloRepository.GetMany(x => codigos.Contains(x.Codigo)).ToList();
+
+            return _mapper.Map<List<PrecioCodigoDto>>(articulo);
+
         }
 
         public bool Validar(ArticuloDto articuloDto) 
@@ -59,9 +96,6 @@ namespace WebApi.Core.Services.Articulos
 
             if (articuloDto.Descripcion.IsNullOrEmpty())
                 throw new NullReferenceException("La descripción no puede estar vació");
-
-
-
 
             return true;
         }

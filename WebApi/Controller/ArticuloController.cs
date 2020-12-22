@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using WebApi.ApiModels.Requests;
 using WebApi.Core.Services.Articulos;
@@ -23,20 +24,27 @@ namespace WebApi.Controller
 
 
         [HttpPost]
-        public IActionResult Create(ArticuloRequest articuloRequest)
+        public IActionResult CrearActualizar(List<ArticuloRequest> articuloRequest)
         {
-            _articuloService.Crear(_mapper.Map<ArticuloDto>(articuloRequest));
+            _articuloService.CrearActualizar(_mapper.Map<List<ArticuloDto>>(articuloRequest));
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpGet]
-        public IActionResult Obtener()
+        public IActionResult ObtenerArticuloPorFecha(DateTime fecha)
         {
-           List<ArticuloDto> articuloDto = _articuloService.Articulos();
+           List<ArticuloDto> articuloDto = _articuloService.Articulos(fecha);
 
             return Ok(articuloDto);
         }
-        
+
+        [HttpGet("Precio")]
+        public IActionResult ObtenerArticuloPorCodigo(List<string> Codigos)
+        {
+            List<PrecioCodigoDto> articuloDto = _articuloService.ArticuloPorPrecio(Codigos);
+
+            return Ok(articuloDto);
+        }
     }
 }

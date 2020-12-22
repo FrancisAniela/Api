@@ -37,6 +37,10 @@ namespace WebApi.Core
             CreateMap<EstadoArticuloDto, EstadoArticulo>().ReverseMap()
                    .ForMember(dest => dest.Id, m => m.MapFrom(src => src.Id))
                    .ForMember(dest => dest.Descripcion, m => m.MapFrom(src => src.Descripcion));
+
+            CreateMap<PrecioCodigoDto, Articulo>().ReverseMap().ReverseMap()
+                    .ForMember(dest => dest.Precio1, m => m.MapFrom(src => src.Precio))
+                    .ForMember(dest => dest.Codigo, m => m.MapFrom(src => src.Codigo));
         }
     }
 

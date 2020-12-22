@@ -13,7 +13,10 @@ namespace WebApi.ApiModels.Requests
         [Required(ErrorMessage = "{0} is required")]
         public string Nombre { get; set; }
         [Required(ErrorMessage = "{0} is required")]
-        public decimal Precio { get; set; }
+        public decimal Precio1 { get; set; }
+        public decimal? Precio2 { get; set; }
+        [Required(ErrorMessage = "{0} is required")]
+        public string Imagen { get; set; }
 
     }
 }
