@@ -38,8 +38,8 @@ namespace WebApi.Core
                    .ForMember(dest => dest.Id, m => m.MapFrom(src => src.Id))
                    .ForMember(dest => dest.Descripcion, m => m.MapFrom(src => src.Descripcion));
 
-            CreateMap<PrecioCodigoDto, Articulo>().ReverseMap().ReverseMap()
-                    .ForMember(dest => dest.Precio1, m => m.MapFrom(src => src.Precio))
+            CreateMap<PrecioCodigoDto, Articulo>().ReverseMap()
+                    .ForMember(dest => dest.Precio, m => m.MapFrom(src => src.Precio1))
                     .ForMember(dest => dest.Codigo, m => m.MapFrom(src => src.Codigo));
         }
     }

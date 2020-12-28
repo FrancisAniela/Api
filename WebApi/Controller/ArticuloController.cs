@@ -39,7 +39,7 @@ namespace WebApi.Controller
             return Ok(articuloDto);
         }
 
-        [HttpGet("Precio")]
+        [HttpPost("Precio")]
         public IActionResult ObtenerArticuloPorCodigo(List<string> Codigos)
         {
             List<PrecioCodigoDto> articuloDto = _articuloService.ArticuloPorPrecio(Codigos);

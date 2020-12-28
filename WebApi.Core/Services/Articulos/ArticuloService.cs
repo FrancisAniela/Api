@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using WebApi.Core.Enums;
 using WebApi.Core.Extensions;
 using WebApi.Core.Models;
 using WebApi.Core.Repositories;
-using System.Linq;
-using WebApi.Core.Enums;
-using System.Linq.Expressions;
 
 namespace WebApi.Core.Services.Articulos
 {
@@ -26,6 +26,9 @@ namespace WebApi.Core.Services.Articulos
 
             List<Articulo> update = new List<Articulo>();
             List<Articulo> crear = new List<Articulo>();
+
+            
+           
 
             foreach (Articulo articulo in articulos)
             {

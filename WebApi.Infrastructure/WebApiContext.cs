@@ -18,6 +18,7 @@ namespace WebApi.Infrastructure
 
         public virtual DbSet<Articulo> Articulo { get; set; }
         public virtual DbSet<EstadoArticulo> EstadoArticulo { get; set; }
+        public virtual DbSet<Seguridad> Seguridad { get; set; }
 
         //public virtual DbSet<AppConfig> AppConfig { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -35,7 +36,9 @@ namespace WebApi.Infrastructure
             modelBuilder.ApplyConfiguration(new EstadoArticuloConfiguration());
 
             modelBuilder.ApplyConfiguration(new ArticuloConfiguration());
-            
+
+            modelBuilder.ApplyConfiguration(new SeguridadConfiguration());
+
             OnModelCreatingPartial(modelBuilder);
         }
 
