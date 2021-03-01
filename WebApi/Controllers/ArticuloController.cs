@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using WebApi.ApiModels.Requests;
 using WebApi.Core.Services.Articulos;
 
-namespace WebApi.Controller
+namespace WebApi.Controllers
 {
 
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class ArticuloController : ControllerBase
+    public class ArticuloController : Controller
     {
         private IMapper _mapper;
         private IArticuloService _articuloService;
@@ -26,6 +26,8 @@ namespace WebApi.Controller
         [HttpPost]
         public IActionResult CrearActualizar(List<ArticuloRequest> articuloRequest)
         {
+
+
             _articuloService.CrearActualizar(_mapper.Map<List<ArticuloDto>>(articuloRequest));
 
             return NoContent();
@@ -34,9 +36,17 @@ namespace WebApi.Controller
         [HttpGet]
         public IActionResult ObtenerArticuloPorFecha(DateTime fecha)
         {
-           List<ArticuloDto> articuloDto = _articuloService.Articulos(fecha);
+            try
+            {
 
-            return Ok(articuloDto);
+                List<ArticuloDto> articuloDto = _articuloService.Articulos(fecha);
+                return Ok(articuloDto);
+            }
+            catch (Exception ex)
+            {
+                return Ok(Response);
+            }
+
         }
 
         [HttpPost("Precio")]

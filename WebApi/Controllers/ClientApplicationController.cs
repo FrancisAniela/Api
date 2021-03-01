@@ -8,7 +8,7 @@ using WebApi.Core.Services.ClientApplications;
 using WebApi.Errors;
 using WebApi.Helpers;
 
-namespace WebApi.Controller
+namespace WebApi.Controllers
 {   
     [Produces("application/json")]
     [Route("api/v1/[controller]")]
@@ -16,7 +16,7 @@ namespace WebApi.Controller
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorApiResponse), StatusCodes.Status500InternalServerError)]
     [ApiController]
-    public class ClientApplicationController : ControllerBase
+    public class ClientApplicationController : Controller
     {
         private IClientApplicationService _clientApplicationService;
         private IAppConfigService _appConfirService;

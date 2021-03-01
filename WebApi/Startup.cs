@@ -177,10 +177,40 @@ namespace WebApi
 
 
             services.AddAuthentication()
+            .AddJwtBearer("All", x =>
+            {
+                x.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        return TokenValidationForPolicyAll(context);
+                    }
+                };
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = appSettings.JwtIssuer,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+
+
+            services.AddAuthentication()
                 .AddScheme<AuthenticationSchemeOptions, BasicApplicationClientAuthenticationHandler>("BasicClientAuthentication", null);
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy("All", policy =>
+                {
+                    policy.AuthenticationSchemes.Add("All");
+                    policy.RequireAuthenticatedUser();
+                });
                 options.AddPolicy("ClientApplication", policy =>
                 {
                     policy.AuthenticationSchemes.Add("ClientApplication");
@@ -209,6 +239,34 @@ namespace WebApi
             if (clientApplication == null || !clientApplication.IsActive)
                 context.Fail("Unauthorized");
 
+            return Task.CompletedTask;
+        }
+
+        private static Task TokenValidationForPolicyAll(TokenValidatedContext context)
+        {
+            int id = int.Parse(context.Principal.Identity.Name);
+            var roleClaim = context.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role);
+
+            if (roleClaim == null)
+                context.Fail("Unauthorized");
+
+            TokenRoleEnum tokenRole = (TokenRoleEnum)int.Parse(roleClaim.Value);
+
+            switch (tokenRole)
+            {
+
+                case TokenRoleEnum.ClientApplication:
+                    {
+                        var clientApplicationService = context.HttpContext.RequestServices.GetRequiredService<IClientApplicationService>();
+                        var clientApplication = clientApplicationService.GetById(id);
+                        if (clientApplication == null || !clientApplication.IsActive)
+                            context.Fail("Unauthorized");
+                        break;
+                    }
+                default:
+                    context.Fail("Unauthorized");
+                    break;
+            }
             return Task.CompletedTask;
         }
     }

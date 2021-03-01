@@ -53,6 +53,9 @@ namespace WebApi.Middleware
                                     errorResponse = new ErrorApiResponse(StatusCodes.Status401Unauthorized, ErrorCodes.Error130Unauthorized, exceptionType.Message);
                                     break;
                                 }
+                            default :
+                                errorResponse = new ErrorApiResponse(StatusCodes.Status400BadRequest, ErrorCodes.Error130Unauthorized, "Bad Request");
+                                break;
                         }
                         //If is 500 and is not production environment then add internal message to the error response for debugging.
                         if (errorResponse.StatusCode == StatusCodes.Status500InternalServerError)
